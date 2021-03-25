@@ -159,6 +159,16 @@ class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
 
 
     /**
+     * Returns a [List] containing the specified number of values. If the amount
+     * is larger than the size of the base list, elements from the base list
+     * will be repeated.
+     *
+     * @return List created from the elements of the cyclic list.
+     */
+    fun toList(amount: Int): List<A> =
+            toList(0..amount)
+
+    /**
      * Returns a string representation of the [CyclicList]. This string will
      * contain comma separated string representations of contained elements.
      * If this Cyclic list contains references to itself then for each such
