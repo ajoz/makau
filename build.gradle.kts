@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.71"
     `java-library`
@@ -44,4 +46,10 @@ val test by tasks.getting(Test::class) {
             "**/*Test.class",
             "**/*Tests.class"
     )
+}
+
+// compile bytecode to java 8 (default is java 6)
+//
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
 }

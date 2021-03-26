@@ -2,6 +2,8 @@ package org.artificialrevelations.makau
 
 import java.lang.IllegalArgumentException
 
+//TODO: API guardian
+
 /**
  * Represents an immutable [Collection] that can be treated as a cycle and
  * iterated indefinitely. It has a normal [List] at its core but allows getting
