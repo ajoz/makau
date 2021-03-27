@@ -51,7 +51,7 @@ import java.lang.IllegalArgumentException
  * @see Iterable
  * @see Iterator
  */
-class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
+data class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
     /**
      * Creates a new instance of [CyclicList] from the specified elements.
      *
@@ -168,7 +168,7 @@ class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
      * @return List created from the elements of the cyclic list.
      */
     fun toList(amount: Int): List<A> =
-            toList(0..amount)
+            toList(0 until amount)
 
     /**
      * Returns a string representation of the [CyclicList]. This string will
@@ -182,4 +182,11 @@ class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
             base.joinToString(", ", "CyclicList(", ")") {
                 if (it === this) "(this Collection)" else it.toString()
             }
+}
+
+fun main() {
+    val c1 = CyclicList(listOf(0, 0, 0, 0, 0, 0, 0, 0, 1))
+    val c2 = c1.movedBy(-2147483648)
+    println(c2)
+//    val c3 = c2.movedBy(2147483648)
 }
