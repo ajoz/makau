@@ -48,8 +48,9 @@ val test by tasks.getting(Test::class) {
     )
 }
 
-// compile bytecode to java 8 (default is java 6)
-//
+// compile bytecode to Java 8 (default is Java 6)
+// jqwik API is using static interface methods that are not usable in Kotlin
+// if Kotlin is set to Java 1.6
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }

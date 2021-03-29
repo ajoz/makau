@@ -12,7 +12,6 @@ typealias ListWithTwoMoveByValues = Tuple3<List<Int>, Int, Int>
 @Label("CyclicList property based tests")
 class CyclicListTests {
     /*
-    get(-0) = get(0) <-- special case
     get(-4) = get(-1) <-- special case
     get(-index % size) = get(size - index)
     get(index % size) = get(index - size)
@@ -161,7 +160,7 @@ class CyclicListTests {
                 @ForAll default: () -> Int
         ) {
             // invariants: empty list, index, func -> list.getOrElse(index, func) == func()
-            Assertions.assertThat(CyclicList<Int>(listOf()).getOrNull(index)).isNull()
+            Assertions.assertThat(CyclicList<Int>(listOf()).getOrElse(index, default)).isEqualTo(default())
         }
     }
 
@@ -184,6 +183,16 @@ class CyclicListTests {
             val cyclicList = CyclicList(list)
             //FIXME: Implement containsAll for cyclic list
             Assertions.assertThat(list.containsAll(cyclicList.toList()) && cyclicList.containsAll(list))
+        }
+
+        @Property
+        fun `made from one element has only that element`(
+                @ForAll element: Any
+        ) {
+            val list = CyclicList(element)
+            Assertions.assertThat(list.size).isEqualTo(1)
+            Assertions.assertThat(list).contains(element)
+            Assertions.assertThat(list[0]).isEqualTo(element)
         }
     }
 }
