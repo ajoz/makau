@@ -183,10 +183,3 @@ data class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
                 if (it === this) "(this Collection)" else it.toString()
             }
 }
-
-fun main() {
-    val c1 = CyclicList(listOf(0, 0, 0, 0, 0, 0, 0, 0, 1))
-    val c2 = c1.movedBy(-2147483648)
-    println(c2)
-//    val c3 = c2.movedBy(2147483648)
-}
