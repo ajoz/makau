@@ -1,92 +1,43 @@
 package org.artificialrevelations.makau.cards
 
-/*
-We would like to design a Game type that describes a current state
-of the Makau game. It should be possible to serialize the state of
-the game and the type should be immutable.
+import org.artificialrevelations.makau.CyclicList
 
-Function responsible for moving the game forward should be stateless.
+private typealias Players = CyclicList<Player>
 
-         processing
-Game #1 ------------> Game #2
+val Players.active
+    get() = this[0]
 
-Problems:
-- how to make the Game an immutable
-- how to determine which player is the active player
-- how to determine which player is the previous player
-  -- in case of playing a king of Spades (previous player draws 5 cards)
-- how to determine which player is the next player
-  -- in case of playing a king of Hearts (next player draws 5 cards)
-  -- in case of playing 2 (next player draws 2 cards)
-  -- in case of playing 3 (next player draws 3 cards)
-  -- in case of playing 4 (next player skips a turn)
-  -- in case of playing Jack (all players in the order from next to active need
-     to supply a demanded card(s), if they are no
-- how to store information about the player after the next one (4 player game)
-- how to express the cycle of the players
+val Players.previous
+    get() = this[-1]
 
-
-Solution #1
-
-Keep the players as a list:
-class Game(val players: List<Player>)
-
-First we can set information about the active player:
+val Players.next
+    get() = this[1]
 
 class Game(
-    val activePlayer: Player,
-    val players: List<Player>
-)
-
-Then we need to set information about the next player:
-
-class Game(
-    val activePlayer: Player,
-    val nextPlayer: Player,
-    val players: List<Player>
-)
-
-Then we need to set information about the previous player:
-
-class Game(
-    val activePlayer: Player,
-    val nextPlayer: Player,
-    val previousPlayer: Player,
-    val players: List<Player>
-)
-
-The list of players is the real problem as we need to implicitly assume they
-are in the correct order. Any issue that will cause wrong order of the players
-on the list can break our 4+ player game as we are bookkeeping only 3 players
-or the neighbourhood of the active player so to speak.
-
-
-
-2p: GA ---> GB ----> GA
-3p: GA ----> GB ----> GC ----> GA
-4p: GA ----> GB ----> GC ----> GD ----> GA
-
-
- */
-
-sealed class Game {
-
+    private val players: Players,
+    val deck: List<Card>, // list of cards that are available for draw
+    val current: Card,
+    val played: List<Card> // list of played cards
+) {
+    val activePlayer = players.active
+    val previousPlayer = players.previous
+    val nextPlayer = players.next
 }
 
-data class TwoPlayer(
-        val playerOne: Player,
-        val playerTwo: Player
-) : Game()
+/*
+Rules:
+1) 2s force next player to draw 2 cards or place another 2s
+2) 3s force next player to draw 3 cards or place another 3s
+4) joker can substitute a picked card (it can be decided before game which)
+5) 4s force the next player to loose the turn or place another 4s
+6) jack demands a rank (cannot demand functional cards: 2, 3, 4, jacks, kings)
+   -- all players need abide (even the playing player)
+   -- only playing another jack and demanding a different rank can stop it
+   -- can play multiple jacks at once
+7) ace demands a suit
+8) king of spades then the previous player draws 5 cards
+9) king of hearts then the next player draws 5 cards
 
-data class ThreePlayer(
-        val playerOne: Player,
-        val playerTwo: Player,
-        val playerThree: Player
-) : Game()
-
-data class FourPlayer(
-        val playerOne: Player,
-        val playerTwo: Player,
-        val playerThree: Player,
-        val playerFour: Player
-) : Game()
+First card that the game starts from does not affect the first player
+- if 
+ */
