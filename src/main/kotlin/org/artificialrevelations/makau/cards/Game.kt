@@ -15,9 +15,9 @@ val Players.next
 
 class Game(
     private val players: Players,
-    val deck: List<Card>, // list of cards that are available for draw
+    val deck: List<Card>,
     val current: Card,
-    val played: List<Card> // list of played cards
+    val played: List<Card>
 ) {
     val activePlayer = players.active
     val previousPlayer = players.previous
@@ -25,6 +25,28 @@ class Game(
 }
 
 /*
+next :: Game -> [Capability]
+run  :: Capability -> Game
+
+How to store information about the current played card state?
+- for the king of spades we have a situation where the previous player draws 5
+cards unless he plays a king of hearts. Some issues:
+2 player game (player #A, player #B)
+* player #A plays king of spades
+* player #B draws the cards
+
+Q: Does the game go to the player #B? Or does the player #A plays the card again
+because player #B already drawn 5 cards?
+
+Turn order is:
+
+#A -> #B -> #A -> #B
+
+If the player #A plays king of spades
+
+
+
+
 Rules:
 1) 2s force next player to draw 2 cards or place another 2s
 2) 3s force next player to draw 3 cards or place another 3s
@@ -39,5 +61,7 @@ Rules:
 9) king of hearts then the next player draws 5 cards
 
 First card that the game starts from does not affect the first player
-- if 
+- if it is a 2 or 3 the player can put a card with the same suit or another 2 or 3,
+  but does not cause the first player to draw 2 or 3 cards
+- if it is a 4 the player can put a card with the same suit or another 4
  */
