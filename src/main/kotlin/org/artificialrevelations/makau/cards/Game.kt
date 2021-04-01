@@ -42,7 +42,65 @@ Turn order is:
 
 #A -> #B -> #A -> #B
 
-If the player #A plays king of spades
+If the player #A plays king of spades it affects the previous player which is
+the player #B, now if the player #B draws 5 cards, then the turn of the player
+#A is finished, should the player #B now play a card?
+
+In case of 3 player game this is much easier as:
+
+#A -> #B -> #C -> #A -> #B -> #C -> #A
+
+When player #A plays king of spades then the previous player (which is #C) draws
+cards then game goes to player #B and allows him to play the card. It is the same
+for games with more players.
+
+- for the king of hearts we have a situation where active player plays it, next
+player needs to draw, does the game move to him? I think yes!
+
+sealed interface Capability
+
+Playing a single card:
+
+data class PlayCard(val card: Card): Capability
+
+Playing a group of cards:
+
+data class PlayCards(val groups: List<CardGroup>): Capability
+
+- do we need to have a special PlayCard capability just for playing a single card?
+  does not have special sense as we can have a Group consisting of a single card
+  it is important if a player has several copies of a card then he can pick how
+  many of them he plays and in what order
+
+  C1, C2, C3, C4
+
+  C1
+  C2,
+  C3,
+  C4
+  C1, C2
+  C1, C3
+  C1, C4
+  ...
+  C1, C2, C3, C4
+  C1, C2, C4, C3
+  C1, C3, C2, C4
+  ...
+
+  How should this be expressed as capabilities? If we would have a capability
+  per card group then it will be a lot of capabilities for the client.
+
+  If we split playing the card into picking and playing then we can make the
+  player decide the order of cards.
+
+
+
+
+object DrawCard : Capability
+object ForfeitGame : Capability
+
+
+
 
 
 
