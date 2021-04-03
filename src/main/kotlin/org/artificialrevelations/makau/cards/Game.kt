@@ -91,9 +91,87 @@ data class PlayCards(val groups: List<CardGroup>): Capability
   per card group then it will be a lot of capabilities for the client.
 
   If we split playing the card into picking and playing then we can make the
-  player decide the order of cards.
+  player decide the order of cards. First pick would cause that the player has
+  the option to pick another or drop a card. In case of a single card to play
+  there would not be a pick option but only a play option available.
 
+  The main issue now is how to proceed with a easy and convenient way to
+  rearrange the card order?
 
+  Idea would be to send also "Rearrange" capabilities beside the "Pick"
+  capabilities after the first Pick was made.
+
+  This creates an issue that there are a lot of capabilities not directly
+  associated with the game itself but the UI and interaction with the game.
+  Do we want such thing?
+
+  In case of a player that has a hand of:
+  - 10 of Diamonds
+  - 10 of Spades
+  - 10 of Clubs
+  - Ace of Hearts
+  - 5 of Clubs
+
+  The current card that was played by the previous player is 6 of Clubs. Current
+  player had several options:
+  - to draw a card
+  - to play a single 5 of Clubs (the same Suit)
+  - to play a single 10 of Clubs (the same Suit)
+  - to play a set of 10s:
+    -- 10C, 10D
+    -- 10C, 10S
+    -- 10C, 10D, 10S
+    -- 10C, 10S, 10D
+  - to play the Ace of Hearts to change the current Suit
+
+  The capabilities sent:
+  - Forfeit <-- a player can always Forfeit a game
+  - DrawCard <-- a player can decide to just draw a card instead of playing
+  - PlayCard(5C) <-- plays the 5C because the suit matches
+  - PlayCard(10C) <-- plays the 10C because the suit matches
+  - PickCard(10C) <-- because it is possible to put a set of cards of the same
+    rank starting from 10C
+
+  if the player decides to pick the card then capabilities sent are:
+  - Forfeit
+  - DrawCard <-- immediately drops the selection and just allows to draw a card
+  - PickCard(10S)
+  - PickCard(10D)
+  - PlayPickedCards <-- immediately allows to play what is picked, even if one
+    card is picked
+
+  current state PICKED: 10C
+
+  If the player decides to Pick 10S then capabilities sent are:
+  - Forfeit
+  - DrawCard <-- immediately drops the selection and just allows to draw a card
+  - PickCard(10D)
+
+  - PlayPickedCards
+
+  current state PICKED: 10C, 10S
+
+  If the player decides to Pick 10D then capabilities sent are:
+  - Forfeit
+  - DrawCard
+  - PlayPickedCards
+  - RearrangePickedCards(10C, 10D, 10S)
+
+  current state PICKED: 10C, 10S, 10D
+
+  The above shows that we have several types of capabilities available:
+
+  1) Overall:
+  - Forfeit
+
+  2) Gameplay related:
+  - DrawCard
+  - PlayCard
+
+  3) UI related:
+  - PickCard
+  - PlayPickedCards
+  - RearrangePickedCard
 
 
 object DrawCard : Capability
