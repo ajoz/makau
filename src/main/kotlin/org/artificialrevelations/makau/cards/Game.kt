@@ -22,8 +22,6 @@ class Game(
     val activePlayer = players.active
     val previousPlayer = players.previous
     val nextPlayer = players.next
-}
-
 /*
 next :: Game -> [Capability]
 run  :: Capability -> Game
@@ -129,35 +127,45 @@ data class PlayCards(val groups: List<CardGroup>): Capability
   - DrawCard <-- a player can decide to just draw a card instead of playing
   - PlayCard(5C) <-- plays the 5C because the suit matches
   - PlayCard(10C) <-- plays the 10C because the suit matches
-  - PickCard(10C) <-- because it is possible to put a set of cards of the same
+  - SelectCard(10C) <-- because it is possible to put a set of cards of the same
     rank starting from 10C
 
-  if the player decides to pick the card then capabilities sent are:
+  if the player decides to select the card then capabilities sent are:
   - Forfeit
   - DrawCard <-- immediately drops the selection and just allows to draw a card
-  - PickCard(10S)
-  - PickCard(10D)
+  - SelectCard(10S)
+  - SelectCard(10D)
   - PlayPickedCards <-- immediately allows to play what is picked, even if one
     card is picked
+  - PlayCard(5C)
+  - PlayCard(10C)
 
-  current state PICKED: 10C
+  current state SELECTED: 10C
 
-  If the player decides to Pick 10S then capabilities sent are:
+  If the player decides to Select 10S then capabilities sent are:
   - Forfeit
   - DrawCard <-- immediately drops the selection and just allows to draw a card
-  - PickCard(10D)
+  - SelectCard(10D)
+  - DeselectCard(10C) <-- will cause the same as Deselecting all cards
+  - DeselectCard(10S)
+  - DeselectAllCards <-- to completely deselect all select cards
+  - PlaySelectedCards
+  - PlayCard(5C) <-- to allow playing cards that are normally available
+  - PlayCard(10C)
 
-  - PlayPickedCards
+  current state SELECTED: 10C, 10S
 
-  current state PICKED: 10C, 10S
-
-  If the player decides to Pick 10D then capabilities sent are:
+  If the player decides to Select 10D then capabilities sent are:
   - Forfeit
   - DrawCard
-  - PlayPickedCards
-  - RearrangePickedCards(10C, 10D, 10S)
+  - PlaySelectedCards
+  - DeselectCard(10C)
+  - DeselectCard(10S)
+  - DeselectCard(10D)
+  - DeselectAllCards
+  - RearrangeSelectedCards(10C, 10D, 10S)
 
-  current state PICKED: 10C, 10S, 10D
+  current state SELECTED: 10C, 10S, 10D
 
   The above shows that we have several types of capabilities available:
 
@@ -167,20 +175,44 @@ data class PlayCards(val groups: List<CardGroup>): Capability
   2) Gameplay related:
   - DrawCard
   - PlayCard
+  - SkipTurn <-- a game could do it automatically but it is better for the
+    player to understand what is happening
 
   3) UI related:
-  - PickCard
-  - PlayPickedCards
-  - RearrangePickedCard
+  - SelectCard
+  - DeselectCard
+  - DeselectAllCards
+  - PlaySelectedCards
+  - RearrangeSelectedCards
 
+How to indicate which player should do something. Usually the capabilities
+sent are related to the current active player. We would like to cover the case
+of attacking the previous player with a King of Spades and the next player with
+a King of Hearts.
 
-object DrawCard : Capability
-object ForfeitGame : Capability
+Let's start with attacking the previous player. The previous player has options:
+- draw 5 cards
+- draw 1 card and check if there is a king of hearts to play it immediately to
+  make a counter attack and if it is not there then draw the other 4 cards
+- play a king of hearts from his hand
 
+If the capabilities are always associated with the active player, how can we send
+the capabilities for the previous player?
 
+Add player information to the capabilities? This seems ok for:
+- draw card capability
+- play card capability
 
+but does not have sense for other capabilities, do we want to pollute their
+design with this additional info?
 
+Create a distinction between ACTIVE player (which is more related to the TURN
+order) and CURRENT player which is the player for which we sent capabilites.
+Usually ACTIVE player and CURRENT player could be the same player but in these
+rare occasions ACTIVE can be different then CURRENT.
 
+this might solve the issue for the niche case of playing king of spades and a
+king of hearts but creates a different way of handling turn to turn gameplay.
 
 
 Rules:
@@ -201,3 +233,5 @@ First card that the game starts from does not affect the first player
   but does not cause the first player to draw 2 or 3 cards
 - if it is a 4 the player can put a card with the same suit or another 4
  */
+}
+
