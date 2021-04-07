@@ -69,7 +69,7 @@ If the player decides to select the card then capabilities sent are:
 - DrawCard <-- immediately drops the selection and just allows to draw a card
 - SelectCard(10S)
 - SelectCard(10D)
-- PlayPickedCards <-- immediately allows to play what is picked, even if one card is picked
+- PlaySelectedCards <-- immediately allows to play what is picked, even if one card is picked
 - PlayCard(5C)
 - PlayCard(10C)
 
@@ -117,12 +117,53 @@ The above shows that we have several types of capabilities available:
 - PlaySelectedCards
 - RearrangeSelectedCards
 
+### Solution 2
 
+The first solution is adding a lot of new capabilities that are related purely with UI and handling some small aspect of the raw game. Let's return  to the example situation, player has the specified hand of cards:
+- 10 of Diamonds
+- 10 of Spades
+- 10 of Clubs
+- Ace of Hearts
+- 5 of Clubs
+
+The current card that was played by the previous player is 6 of Clubs. The initial capabilities sent are:
+- ForfeitGame
+- DrawCard
+- PlayCard(5C)
+- PlayCard(10C)
+
+If the player would decide to use the PlayCard(5C) capability then he would receive in response:
+- ForfeitGame
+- CancelPlay
+- EndTurn
+
+If the player would decide to use the PlayCard(10C) capability then he would receive in response:
+- ForfeitGame
+- CancelPlay
+- EndTurn
+- PlayCard(10D)
+- PlayCard(10S)
+- PlayCard(10H)
+
+If the player would decide to use the PlayCard(10S) capability then he would receive in response:
+- ForfeitGame
+- CancelPlay
+- EndTurn
+- PlayCard(10D)
+- PlayCard(10H)
+
+Each time the amount of available capabilities will decrease. To finally finish the turn the player needs to confirm everything with using EndTurn capability. Technically it is possible to not add any CancelPlay capability that would allow the player to rearrange the played cards again. Comparing to the solution 1 everything is much simplified and the card selection is implicit and hidden, it does not leak outside in the form of the dedicated capabilities.
+
+This makes the strain on the UI code lower as it does not need to scan the capabilities and correctly assign it to what a player can do.
+
+### Solution 3
+
+Instead of a multiple different PlayCard capabilities introduce a single PlayCards that accepts a list/array of cards to play. Then send all the valid permutations without repetition of cards that can be played. This would cause the UI code to be much more complicated as the list of "play" capabilities can be very large and the UI would need to distinguish when to show certain capabilities.
 
 ## Decision
 
-The change that we're proposing or have agreed to implement.
+Solution 2 will be used and a small number of capabilities will be sent.
 
 ## Consequences
 
-What becomes easier or more difficult to do and any risks introduced by the change that will need to be mitigated.
+None
