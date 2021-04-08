@@ -93,50 +93,10 @@ data class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
      * @throws IllegalArgumentException If the [CyclicList] is empty.
      */
     operator fun get(index: Int): A =
-            getOrNull(index)
-                    ?: throw IllegalArgumentException("CyclicList is empty!")
-
-    /**
-     * Returns element at the specified index of the [CyclicList]. The index
-     * can be negative or can exceed the size of cyclic list.
-     *
-     * @param index Position within the cyclic list for which the element is
-     * supposed to be returned.
-     * @return Element that is stored under the specified index or null if the
-     * cyclic list is empty.
-     */
-    fun getOrNull(index: Int): A? =
-            if (isEmpty())
-                null
-            else
-                base[(index % base.size + base.size) % base.size]
-
-    /**
-     * Returns element at the specified index of the [CyclicList] or runs the
-     * specified function if the list is empty. The index can be negative or
-     * can exceed the size of cyclic list.
-     *
-     * @param index Position within the cyclic list for which the element is
-     * supposed to be returned.
-     * @return Element that is stored under the specified index or value
-     * returned by the specified function.
-     */
-    inline fun getOrElse(index: Int, emptyValue: () -> A): A =
-            if (isEmpty()) emptyValue() else get(index)
-
-    /**
-     * Returns a new instance of [CyclicList] that has all the elements moved
-     * by the specified amount (can be negative).
-     *
-     * @param number value by which the resulting CyclicList should have its
-     * elements moved.
-     * @return Instance of [CyclicList] with elements moved by the specified
-     * amount.
-     */
-    infix fun movedBy(number: Int): CyclicList<A> =
-            CyclicList(List(base.size) { index ->
-                this[index - (number % base.size)]
-            })
+        if (isEmpty())
+            throw IllegalArgumentException("CyclicList is empty!")
+        else
+            base[(index % base.size + base.size) % base.size]
 
     /**
      * Returns the base [List] that is behind this [CyclicList]. This method is
@@ -148,27 +108,6 @@ data class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
      */
     fun toList(): List<A> =
             base
-
-    /**
-     * Returns a [List] constructed from the values stored under indices
-     * represented as the specified range. Resulting [List] can be larger or
-     * smaller then the base underlying list.
-     *
-     * @return List created from the elements of the cyclic list.
-     */
-    fun toList(range: IntRange): List<A> =
-            if (isEmpty()) emptyList() else range.map { index -> get(index) }
-
-
-    /**
-     * Returns a [List] containing the specified number of values. If the amount
-     * is larger than the size of the base list, elements from the base list
-     * will be repeated.
-     *
-     * @return List created from the elements of the cyclic list.
-     */
-    fun toList(amount: Int): List<A> =
-            toList(0 until amount)
 
     /**
      * Returns a string representation of the [CyclicList]. This string will
