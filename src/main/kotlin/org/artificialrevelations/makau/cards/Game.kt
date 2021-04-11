@@ -23,11 +23,22 @@ class Game(
     val previousPlayer = players.previous
     val nextPlayer = players.next
 /*
-next :: Game -> [Capability]
+Topics:
+
+- ForfeitGame capability sent always for every player? or sent only for the
+active player? Should non active players need to wait for their turn to forfeit
+the game?
+
+- How to store information about the current played card state and previously
+played cards? This has the most use for 2, 3, 4s because of cumulative effect
+on the next player. This has use for Jack which demands a specific card. In case
+of playing Jack and demanding a card, the active player who demanded the card
+is supposed to play that card last. Each player needs to play the demanded card,
+draw a card or play a Jack and demand a different card.
+
+- Going from Game state to Game state through capabilities
+getCapabilities :: Game -> [Capability]
 run  :: Capability -> Game
-
-How to store information about the current played card state?
-
 
 - for the king of spades we have a situation where the previous player draws 5
 cards unless he plays a king of hearts. Some issues:
@@ -56,36 +67,6 @@ for games with more players.
 
 - for the king of hearts we have a situation where active player plays it, next
 player needs to draw, does the game move to him? I think yes!
-
-How to indicate which player should do something. Usually the capabilities
-sent are related to the current active player. We would like to cover the case
-of attacking the previous player with a King of Spades and the next player with
-a King of Hearts.
-
-Let's start with attacking the previous player. The previous player has options:
-- draw 5 cards
-- draw 1 card and check if there is a king of hearts to play it immediately to
-  make a counter attack and if it is not there then draw the other 4 cards
-- play a king of hearts from his hand
-
-If the capabilities are always associated with the active player, how can we send
-the capabilities for the previous player?
-
-Add player information to the capabilities? This seems ok for:
-- draw card capability
-- play card capability
-
-but does not have sense for other capabilities, do we want to pollute their
-design with this additional info?
-
-Create a distinction between ACTIVE player (which is more related to the TURN
-order) and CURRENT player which is the player for which we sent capabilities.
-Usually ACTIVE player and CURRENT player could be the same player but in these
-rare occasions ACTIVE can be different then CURRENT.
-
-This might solve the issue for the niche case of playing king of spades and a
-king of hearts but creates a different way of handling turn to turn gameplay.
-
  */
 }
 
