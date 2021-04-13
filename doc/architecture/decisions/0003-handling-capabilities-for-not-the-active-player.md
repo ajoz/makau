@@ -65,14 +65,35 @@ Also the problem is that despite sending the information about the target player
 
 ### Solution 2
 
-
-
-
-### Solution 3
-
 Create a distinction between ACTIVE player (which is more related to the TURN order) and CURRENT player which is the player for which we sent capabilities. Usually the ACTIVE player and the CURRENT player should be the same player but in these rare occasions the ACTIVE can be different then the CURRENT.
 
-This might solve the issue for the niche case of playing king of spades and a king of hearts but creates a different way of handling turn to turn gameplay.
+This will create confusion as to which one is associated with the turn order and which is associated with capabilities. This confusion could be removed by introducing a strict distinction between Turn order and current game state capabilities.
+
+Instead of the Game state defined as:
+
+class Game(
+    val previous: Player,
+    val active: Player,
+    val next: Player,
+    val players: List<Player>
+)
+
+A deliberate information about the Turn can be specified:
+
+class Turn(
+    val previous: Player,
+    val active: Player,
+    val next: Player
+)
+
+class Game(
+    val current: Player,
+    val turn: Turn,
+    val players: List<Player>
+)
+
+
+
 
 ## Consequences
 
