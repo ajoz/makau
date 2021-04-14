@@ -1,4 +1,4 @@
-package org.artificialrevelations.makau.cards
+package org.artificialrevelations.makau.game
 
 /*
 Rules:
