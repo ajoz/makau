@@ -3,6 +3,7 @@ package org.artificialrevelations.makau
 import net.jqwik.api.*
 import net.jqwik.api.Tuple.Tuple2
 import net.jqwik.api.Tuple.Tuple3
+import org.artificialrevelations.makau.util.*
 import org.assertj.core.api.Assertions
 
 typealias ListWithPositiveIndex = Tuple2<List<Int>, Int>
@@ -51,7 +52,8 @@ class CyclicListTests {
             val list = tuple.get1()
             val index = tuple.get2()
             // subList is exclusive, normal x .. y range is inclusive, needs to use until for it
-            Assertions.assertThat(list.subList(index, list.size)).isEqualTo(CyclicList(list).toList(index until list.size))
+            Assertions.assertThat(list.subList(index, list.size)).isEqualTo(
+                CyclicList(list).toList(index until list.size))
         }
     }
 

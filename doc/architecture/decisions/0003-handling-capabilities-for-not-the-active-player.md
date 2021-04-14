@@ -83,18 +83,21 @@ A deliberate information about the Turn can be specified:
 class Turn(
     val previous: Player,
     val active: Player,
-    val next: Player
+    val next: Player,
+    val order: CyclicList<Player>
 )
 
 class Game(
     val current: Player,
-    val turn: Turn,
-    val players: List<Player>
+    val turn: Turn
 )
 
+Its much more clear what certain information is about this way. A clear distinction between two domains begings to rise, there is a "turn domain" and a "play domain" making the game as a whole.
 
+## Decision
 
+Solution #2 will be used as it creates a distinction between certain concepts of the game.
 
 ## Consequences
 
-What becomes easier or more difficult to do and any risks introduced by the change that will need to be mitigated.
+A specific language begins to form that describes the game and exposes some conceptual domains. They will be named and won't be implict.

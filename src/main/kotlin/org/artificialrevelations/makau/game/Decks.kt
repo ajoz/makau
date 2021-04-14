@@ -1,5 +1,7 @@
 package org.artificialrevelations.makau.cards
 
+import org.artificialrevelations.makau.game.Deck
+
 /**
  * Returns a standard 52-card deck of cards.
  */

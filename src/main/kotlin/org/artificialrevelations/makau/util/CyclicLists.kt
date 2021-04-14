@@ -1,4 +1,4 @@
-package org.artificialrevelations.makau
+package org.artificialrevelations.makau.util
 
 /**
  * Returns element at the specified index of the [CyclicList]. The index

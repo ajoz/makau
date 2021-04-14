@@ -1,27 +1,14 @@
-package org.artificialrevelations.makau.cards
+package org.artificialrevelations.makau.game
 
-import org.artificialrevelations.makau.CyclicList
-
-private typealias Players = CyclicList<Player>
-
-val Players.active
-    get() = this[0]
-
-val Players.previous
-    get() = this[-1]
-
-val Players.next
-    get() = this[1]
+import org.artificialrevelations.makau.cards.Card
+import org.artificialrevelations.makau.turn.Turn
 
 class Game(
-    private val players: Players,
+    val turn: Turn,
     val deck: List<Card>,
     val current: Card,
     val played: List<Card>
 ) {
-    val activePlayer = players.active
-    val previousPlayer = players.previous
-    val nextPlayer = players.next
 /*
 Topics:
 

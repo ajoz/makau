@@ -1,4 +1,4 @@
-package org.artificialrevelations.makau
+package org.artificialrevelations.makau.util
 
 import java.lang.IllegalArgumentException
 
@@ -51,6 +51,7 @@ import java.lang.IllegalArgumentException
  * @see Iterable
  * @see Iterator
  */
+//TODO: Move to a separate library project and expose it with jitpack.io
 data class CyclicList<A>(private val base: List<A>) : Collection<A> by base {
     /**
      * Creates a new instance of [CyclicList] from the specified elements.
