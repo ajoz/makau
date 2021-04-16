@@ -62,3 +62,12 @@ fun <A> CyclicList<A>.toList(range: IntRange): List<A> =
  */
 fun <A> CyclicList<A>.toList(amount: Int): List<A> =
     toList(0 until amount)
+
+/**
+ * Returns a [CyclicList] containing all the elements of the original CyclicList
+ * but in a reversed order.
+ *
+ * @return CyclicList created from the elements of the original CyclicList.
+ */
+fun <A> CyclicList<A>.reversed(): CyclicList<A> =
+    CyclicList(toList().reversed())
