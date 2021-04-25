@@ -7,10 +7,10 @@ private typealias Players = CyclicList<Player>
 
 //TODO: remove the suppress after this is used, anoys me
 @Suppress("MemberVisibilityCanBePrivate", "CanBeParameter", "unused")
-class Turn(
-    val order: Players
+class TurnOrder(
+    val players: Players
 ) {
-    val previous: Player = order[-1]
-    val active: Player = order[0]
-    val next: Player = order[1]
+    val previous: Player = players[-1]
+    val active: Player = players[0]
+    val next: Player = players[1]
 }
